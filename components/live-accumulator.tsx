@@ -13,6 +13,7 @@ import { useAccumulatorTrading } from '../hooks/use-accumulator-trading';
 import { useDerivWSContext } from '@/components/custom/deriv-ws-provider';
 import { useLogoSrc } from '@/components/custom/logo-src-provider';
 import { AccumulatorView } from './accumulator-view';
+import { BotPanel } from './bot-panel';
 import type { AccumulatorsAppConfig } from '../lib/app-config';
 
 export function LiveAccumulator({
@@ -54,6 +55,7 @@ export function LiveAccumulator({
   const { getQuotes, subscribeQuotes, unsubscribeQuotes } = useSmartChartsApi(trading.ws);
 
   return (
+    <>
     <AccumulatorView
       authState={authState}
       accounts={accounts}
@@ -100,5 +102,24 @@ export function LiveAccumulator({
       rearrangeMode={rearrangeMode}
       onReorder={onReorder}
     />
+    {!editMode && (
+      <BotPanel
+        isAuthenticated={!!auth.wsUrl}
+        isRealAccount={activeAccount?.account_type === 'real'}
+        symbols={trading.symbols}
+        activeSymbol={trading.activeSymbol}
+        selectSymbol={trading.selectSymbol}
+        growthRate={trading.growthRate}
+        setGrowthRate={trading.setGrowthRate}
+        stake={trading.stake}
+        setStake={trading.setStake}
+        proposal={trading.proposal}
+        buyContract={trading.buyContract}
+        isBuying={trading.isBuying}
+        openPositions={trading.openPositions}
+        sellContract={trading.sellContract}
+      />
+    )}
+    </>
   );
 }
