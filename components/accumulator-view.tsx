@@ -1,7 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { useCallback, useMemo, useState, type CSSProperties } from 'react';
+import { useCallback, useMemo, useState, type CSSProperties, type ReactNode } from 'react';
 import { Localize } from '@deriv-com/translations';
 import { Ban } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -88,6 +88,8 @@ function FixedZone({
 const noopAsyncAuth = async () => {};
 
 export interface AccumulatorViewProps {
+  /** When set, replaces the stock Growth rate / Stake / Buy card (standard layout). */
+  controlsSlot?: ReactNode;
   // Auth
   authState: AuthState;
   accounts: DerivAccount[];
@@ -211,6 +213,7 @@ export function AccumulatorView({
   selectedKey,
   rearrangeMode,
   onReorder,
+  controlsSlot,
 }: AccumulatorViewProps) {
   const { localize } = useAppTranslations();
   const isMobile = useIsMobile();
@@ -514,7 +517,9 @@ export function AccumulatorView({
 
             {/* Column 2: Trade controls in a Card */}
             <div className="max-lg:flex-1 max-lg:min-h-0 max-lg:overflow-y-auto max-lg:overscroll-contain max-lg:border-t max-lg:border-border max-lg:pt-3 max-lg:pb-24 lg:pt-0 flex flex-col gap-3">
-              {isLoading ? (
+              {controlsSlot ? (
+                controlsSlot
+              ) : isLoading ? (
                 <Skeleton className="lg:h-[min(33.6rem,66vh)] lg:min-h-[384px] max-lg:h-48 w-full rounded-xl" />
               ) : (
                 <Card className="lg:h-[min(33.6rem,66vh)] lg:min-h-[384px] lg:overflow-y-auto">

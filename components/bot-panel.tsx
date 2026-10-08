@@ -35,7 +35,6 @@ interface Props {
 }
 
 export function BotPanel(p: Props) {
-  const [open, setOpen] = useState(false);
   const [allowReal, setAllowReal] = useState(false);
   const [cfg, setCfg] = useState<BotConfig>({
     strategy: 'hit', n: 3, targetTicks: 2, stopProfit: 5, stopLoss: 10,
@@ -59,17 +58,12 @@ export function BotPanel(p: Props) {
   const winRate = bot.trades ? Math.round((bot.wins / bot.trades) * 100) : 0;
 
   return (
-    <div className="fixed bottom-3 right-3 z-[80] w-[320px] max-w-[calc(100vw-1.5rem)] rounded-lg border border-border bg-card text-card-foreground shadow-xl">
-      <button
-        type="button"
-        onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center justify-between px-3 py-2 text-sm font-semibold"
-      >
+    <div className="flex flex-col rounded-xl border border-border bg-card text-card-foreground lg:h-[min(33.6rem,66vh)] lg:min-h-[384px]">
+      <div className="flex items-center justify-between px-4 py-2 text-sm font-semibold">
         <span>Auto Bot {bot.running ? '(running)' : ''}</span>
-        <span className="text-xs text-muted-foreground">{open ? 'Hide' : 'Show'}</span>
-      </button>
-      {open && (
-        <div className="max-h-[75vh] overflow-y-auto border-t border-border px-3 pb-3">
+      </div>
+      {true && (
+        <div className="flex-1 overflow-y-auto border-t border-border px-4 pb-3">
           <div className="mt-2 flex flex-wrap gap-1.5 text-xs">
             <span className="rounded border border-border px-2 py-0.5">Since hit: <b>{bot.since}</b></span>
             <span className="rounded border border-border px-2 py-0.5">Hits: {bot.hits}</span>

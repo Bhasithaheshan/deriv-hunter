@@ -55,7 +55,6 @@ export function LiveAccumulator({
   const { getQuotes, subscribeQuotes, unsubscribeQuotes } = useSmartChartsApi(trading.ws);
 
   return (
-    <>
     <AccumulatorView
       authState={authState}
       accounts={accounts}
@@ -101,25 +100,26 @@ export function LiveAccumulator({
       selectedKey={selectedKey}
       rearrangeMode={rearrangeMode}
       onReorder={onReorder}
+      controlsSlot={
+        editMode ? undefined : (
+          <BotPanel
+            isAuthenticated={!!auth.wsUrl}
+            isRealAccount={activeAccount?.account_type === 'real'}
+            symbols={trading.symbols}
+            activeSymbol={trading.activeSymbol}
+            selectSymbol={trading.selectSymbol}
+            growthRate={trading.growthRate}
+            setGrowthRate={trading.setGrowthRate}
+            stake={trading.stake}
+            setStake={trading.setStake}
+            proposal={trading.proposal}
+            buyContract={trading.buyContract}
+            isBuying={trading.isBuying}
+            openPositions={trading.openPositions}
+            sellContract={trading.sellContract}
+          />
+        )
+      }
     />
-    {!editMode && (
-      <BotPanel
-        isAuthenticated={!!auth.wsUrl}
-        isRealAccount={activeAccount?.account_type === 'real'}
-        symbols={trading.symbols}
-        activeSymbol={trading.activeSymbol}
-        selectSymbol={trading.selectSymbol}
-        growthRate={trading.growthRate}
-        setGrowthRate={trading.setGrowthRate}
-        stake={trading.stake}
-        setStake={trading.setStake}
-        proposal={trading.proposal}
-        buyContract={trading.buyContract}
-        isBuying={trading.isBuying}
-        openPositions={trading.openPositions}
-        sellContract={trading.sellContract}
-      />
-    )}
-    </>
   );
 }
