@@ -6,10 +6,6 @@ import { useAccumulatorBot, type BotConfig, type BotStrategy } from '../hooks/us
 import type { AccumulatorProposalInfo } from '../hooks/use-accumulator-proposal';
 import type { OpenPosition } from '../lib/types';
 
-const MARKETS = ['R_10', 'R_25', 'R_50', 'R_75', 'R_100'];
-const MARKET_LABEL: Record<string, string> = {
-  R_10: 'Volatility 10', R_25: 'Volatility 25', R_50: 'Volatility 50', R_75: 'Volatility 75', R_100: 'Volatility 100',
-};
 const STRATEGIES: { value: BotStrategy; label: string }[] = [
   { value: 'hit', label: 'Enter right after a barrier hit' },
   { value: 'quiet', label: 'Enter after N ticks with no hit' },
@@ -39,7 +35,7 @@ interface Props {
 }
 
 export function BotPanel(p: Props) {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const [allowReal, setAllowReal] = useState(false);
   const [cfg, setCfg] = useState<BotConfig>({
     strategy: 'hit', n: 3, targetTicks: 2, stopProfit: 5, stopLoss: 10,
@@ -56,7 +52,10 @@ export function BotPanel(p: Props) {
   );
 
   const canStart = p.isAuthenticated && (!p.isRealAccount || allowReal);
-  const markets = MARKETS.filter((m) => p.symbols.some((s) => s.underlying_symbol === m));
+  const volatility = p.symbols
+    .filter((s) => /volatility\s*(10|25|50|75|100)\b/i.test(s.underlying_symbol_name))
+    .sort((a, b) => a.underlying_symbol_name.localeCompare(b.underlying_symbol_name, undefined, { numeric: true }));
+  const markets = volatility.length ? volatility : p.symbols;
   const winRate = bot.trades ? Math.round((bot.wins / bot.trades) * 100) : 0;
 
   return (
@@ -84,7 +83,10 @@ export function BotPanel(p: Props) {
           <label className={lbl}>Market</label>
           <select className={field} disabled={bot.running}
             value={p.activeSymbol?.underlying_symbol ?? ''} onChange={(e) => p.selectSymbol(e.target.value)}>
-            {markets.map((m) => <option key={m} value={m}>{MARKET_LABEL[m]}</option>)}
+            {markets.length === 0 && <option value="">Loading markets...</option>}
+            {markets.map((m) => (
+              <option key={m.underlying_symbol} value={m.underlying_symbol}>{m.underlying_symbol_name}</option>
+            ))}
           </select>
 
           <div className="grid grid-cols-3 gap-2">
